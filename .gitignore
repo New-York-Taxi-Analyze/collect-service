@@ -1,3 +1,10 @@
+.DS_Store
+.idea
+.gradle
+
+build/
+core/
+
 # Compiled class file
 *.class
 
