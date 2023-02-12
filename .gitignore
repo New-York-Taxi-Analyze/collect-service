@@ -3,7 +3,6 @@
 .gradle
 
 build/
-core/
 
 # Compiled class file
 *.class
