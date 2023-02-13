@@ -13,16 +13,20 @@ configurations {
 }
 
 dependencies {
+	implementation project(':avro')
 
-	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: springBootVersion
+	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: springBootVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
+	implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
 
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
 	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+	testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: springBootVersion
 }
 
 tasks.named('test') {

@@ -20,6 +20,7 @@ configurations {
 
 dependencies {
     implementation project(':core')
+    implementation project(':avro')
 
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 
