@@ -4,7 +4,7 @@ plugins {
 
 group = 'com.newyorktaxi'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
 	compileOnly {
@@ -12,8 +12,24 @@ configurations {
 	}
 }
 
+compileJava {
+	options.compilerArgs += [
+			'-Amapstruct.suppressGeneratorTimestamp=true',
+			'-Amapstruct.suppressGeneratorVersionInfoComment=true',
+			'-Amapstruct.defaultComponentModel=spring',
+			'-Amapstruct.defaultInjectionStrategy=constructor'
+	]
+}
+
 dependencies {
 	implementation project(':avro')
+
+	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
+
+	compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
+	testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
+	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
+	testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
 
 	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: springBootVersion
 	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: springBootVersion

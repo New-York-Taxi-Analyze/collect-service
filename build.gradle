@@ -1,16 +1,18 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
 plugins {
 	id 'java'
 }
 
 group = 'com.newyorktaxi'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = JavaVersion.VERSION_17
 
 project.ext {
 	springBootVersion = '3.0.2'
 
 	lombokVersion = '1.18.+'
-	mapStructVersion = '1.4.1.Final'
+	mapStructVersion = '1.5.3.Final'
 	jupiterVersion = '5.9.+'
 	assertJVersion = '3.19.0'
 }
@@ -19,35 +21,6 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
-}
-
-compileJava {
-	options.compilerArgs += [
-			'-Amapstruct.suppressGeneratorTimestamp=true',
-			'-Amapstruct.suppressGeneratorVersionInfoComment=true',
-			'-Amapstruct.defaultComponentModel=spring',
-			'-Amapstruct.defaultInjectionStrategy=constructor'
-	]
-}
-
-dependencies {
-	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
-
-	compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
-	testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
-	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
-	testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
-
-	compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: jupiterVersion
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: jupiterVersion
-	testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: jupiterVersion
-
-	testImplementation group: 'org.assertj', name: 'assertj-core', version: assertJVersion
 }
 
 tasks.named('test') {

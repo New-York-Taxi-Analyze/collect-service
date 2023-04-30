@@ -10,7 +10,7 @@ bootJar {
 
 group = 'com.newyorktaxi'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
     compileOnly {
@@ -18,10 +18,20 @@ configurations {
     }
 }
 
+compileJava {
+    options.compilerArgs += [
+        '-Amapstruct.suppressGeneratorTimestamp=true',
+        '-Amapstruct.suppressGeneratorVersionInfoComment=true',
+        '-Amapstruct.defaultComponentModel=spring',
+        '-Amapstruct.defaultInjectionStrategy=constructor'
+    ]
+}
+
 dependencies {
     implementation project(':core')
     implementation project(':avro')
 
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 
     compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
