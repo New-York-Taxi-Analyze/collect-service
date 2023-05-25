@@ -1,26 +1,24 @@
 package com.newyorktaxi.usecase.impl;
 
-import com.newyorktaxi.model.DatePeriod;
-import com.newyorktaxi.model.TotalResponse;
+import com.newyorktaxi.model.Total;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.FunctionalUseCase;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 @Component
-@Validated
+//@Validated
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class GetTotalUseCase implements FunctionalUseCase<DatePeriod, TotalResponse> {
+public class GetTotalUseCase implements FunctionalUseCase<DatePeriodParams, Total> {
 
     @Override
-    public TotalResponse execute(@Valid DatePeriod totalRequest) {
-        return TotalResponse.builder()
+    public Total execute(/*@Valid*/ DatePeriodParams params) {
+        return Total.builder()
                 .total(201.)
-                .date(totalRequest.getYear() + "/" + totalRequest.getMonth() + "/" + totalRequest.getDay())
+                .date(params.getYear() + "/" + params.getMonth() + "/" + params.getDay())
                 .build();
     }
 }

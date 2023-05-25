@@ -1,10 +1,12 @@
 package com.newyorktaxi.controller;
 
-import com.newyorktaxi.mapper.TotalMapper;
-import com.newyorktaxi.mapper.TripInfoMapper;
-import com.newyorktaxi.model.DatePeriod;
+import com.newyorktaxi.mapper.DatePeriodParamsMapper;
+import com.newyorktaxi.mapper.TotalResponseMapper;
+import com.newyorktaxi.mapper.TripInfoParamsMapper;
+import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
-import com.newyorktaxi.model.TripInfo;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
+import com.newyorktaxi.usecase.params.TripInfoParams;
 import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.usecase.FunctionalUseCase;
 import jakarta.validation.constraints.Max;
@@ -30,18 +32,19 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReportController {
 
-    TotalMapper totalMapper;
-    TripInfoMapper tripInfoMapper;
-    FunctionalUseCase<DatePeriod, TotalResponse> getTotalUseCase;
-    FunctionalUseCase<TripInfo, Void> messageUseCase;
+    DatePeriodParamsMapper datePeriodParamsMapper;
+    TripInfoParamsMapper tripInfoParamsMapper;
+    TotalResponseMapper totalResponseMapper;
+    FunctionalUseCase<DatePeriodParams, Total> getTotalUseCase;
+    FunctionalUseCase<TripInfoParams, Void> messageUseCase;
 
     @PostMapping(value = "/message", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> message(@RequestBody TripInfoRequest messageRequest) {
         log.info("Sending message: {}", messageRequest);
-        final TripInfo message = tripInfoMapper.toTripInfo(messageRequest);
+        final TripInfoParams tripInfoParams = tripInfoParamsMapper.toTripInfoParams(messageRequest);
 
-        messageUseCase.execute(message);
-        log.debug("Message sent successfully with data: {}", message);
+        messageUseCase.execute(tripInfoParams);
+        log.debug("Message sent successfully with data: {}", tripInfoParams);
         return ResponseEntity.ok().build();
     }
 
@@ -51,8 +54,9 @@ public class ReportController {
                                   @RequestParam(required = false) @Min(1) @Max(31) Integer day) {
         log.info("Getting total count with params: year={}, month={}, day={}", year, month, day);
 
-        final DatePeriod totalRequest = totalMapper.toDatePeriod(year, month, day);
-        final TotalResponse totalResponse = getTotalUseCase.execute(totalRequest);
+        final DatePeriodParams datePeriodParams = datePeriodParamsMapper.toDatePeriodParams(year, month, day);
+        final Total total = getTotalUseCase.execute(datePeriodParams);
+        final TotalResponse totalResponse = totalResponseMapper.toTotalResponse(total);
 
         log.debug("Total count retrieved successfully with data: {}", totalResponse);
         return totalResponse;

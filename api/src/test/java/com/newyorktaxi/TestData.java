@@ -1,7 +1,8 @@
 package com.newyorktaxi;
 
-import com.newyorktaxi.model.DatePeriod;
+import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
@@ -19,8 +20,15 @@ public class TestData {
                 .build();
     }
 
-    public DatePeriod buildDatePeriod() {
-        return DatePeriod.builder()
+    public Total buildTotal() {
+        return Total.builder()
+                .total(TOTAL)
+                .date(YEAR + "/" + MONTH + "/" + DAY)
+                .build();
+    }
+
+    public DatePeriodParams buildDatePeriod() {
+        return DatePeriodParams.builder()
                 .year(YEAR)
                 .month(MONTH)
                 .day(DAY)

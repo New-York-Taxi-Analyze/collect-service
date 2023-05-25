@@ -1,5 +1,8 @@
-package com.newyorktaxi.model;
+package com.newyorktaxi.usecase.params;
 
+import com.newyorktaxi.model.PaymentType;
+import com.newyorktaxi.model.RateCodeType;
+import com.newyorktaxi.model.StoreAndFwdFlagType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +16,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class TripInfo {
+public class TripInfoParams {
+
     Integer vendorId;
     Instant tpepPickupDatetime;
     Instant tpepDropoffDatetime;

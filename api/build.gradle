@@ -31,9 +31,9 @@ dependencies {
     implementation project(':core')
     implementation project(':avro')
 
-    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
     compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
     testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
     annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
@@ -44,11 +44,8 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
-//    testImplementation 'org.springframework.security:spring-security-test'
 }
 
 tasks.named('test') {

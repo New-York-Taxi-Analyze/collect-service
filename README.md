@@ -1,10 +1,17 @@
 # collect-service
 
+curl --location 'http://localhost:8080/api/v1/createUser' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "email": "user@test.com",
+    "password": "12345"
+}'
+
 curl --location --request GET 'http://localhost:8080/api/v1/total?year=2023&month=4&day=30'
 
 curl --location --request POST 'http://localhost:8080/api/v1/message' \
 --header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJteWtoYWlsb0Bzb21icmFpbmMuY29tIiwiZXhwIjoxNTk2MDY3MjAwLCJpYXQiOjE1NzgwOTYwMDB9.v1KcomG9w1hmvRWlAc-68GBE6-46K3CFAjdR0nk35yo' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyQHRlc3QuY29tIiwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdLCJpYXQiOjE2ODQ3Nzc4MDQsImV4cCI6MTcxNDc3NzgwNH0.UdZiTqnzsiONrSOm_SDfl_feyzZNr23tfEveGmwPT14' \
 --data-raw '{
     "vendor_id": 1,
     "tpep_pickup_datetime": "2023-11-04T12:34:56.000Z",

@@ -1,13 +1,13 @@
 package com.newyorktaxi.validation;
 
-import com.newyorktaxi.model.DatePeriod;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-public class DatePeriodValidator implements ConstraintValidator<DatePeriodConstraint, DatePeriod> {
+public class DatePeriodValidator implements ConstraintValidator<DatePeriodConstraint, DatePeriodParams> {
 
     @Override
     public void initialize(DatePeriodConstraint constraintAnnotation) {
@@ -15,7 +15,7 @@ public class DatePeriodValidator implements ConstraintValidator<DatePeriodConstr
     }
 
     @Override
-    public boolean isValid(DatePeriod datePeriod, ConstraintValidatorContext context) {
+    public boolean isValid(DatePeriodParams datePeriod, ConstraintValidatorContext context) {
         if(datePeriod.getDay() != null) {
             if (datePeriod.getMonth() == null) {
                 context.buildConstraintViolationWithTemplate("value is empty")

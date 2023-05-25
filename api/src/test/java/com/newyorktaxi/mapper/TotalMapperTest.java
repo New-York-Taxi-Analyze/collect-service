@@ -3,7 +3,7 @@ package com.newyorktaxi.mapper;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.newyorktaxi.TestData;
-import com.newyorktaxi.model.DatePeriod;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 @Tag("unit")
 class TotalMapperTest {
 
-    private static final TotalMapper mapper = new TotalMapperImpl();
+    private static final DatePeriodParamsMapper mapper = new DatePeriodParamsMapperImpl();
 
     @Test
     @DisplayName("Should successfully map request data to date period")
     void testToTotalRequest() {
-        final DatePeriod expected = TestData.buildDatePeriod();
+        final DatePeriodParams expected = TestData.buildDatePeriod();
 
-        final DatePeriod actual = mapper.toDatePeriod(TestData.YEAR, TestData.MONTH, TestData.DAY);
+        final DatePeriodParams actual = mapper.toDatePeriodParams(TestData.YEAR, TestData.MONTH, TestData.DAY);
 
         assertThat(actual)
                 .as("actual does not match expected")

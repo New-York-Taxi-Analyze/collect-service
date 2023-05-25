@@ -4,9 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.newyorktaxi.TestData;
-import com.newyorktaxi.mapper.TotalMapper;
-import com.newyorktaxi.model.DatePeriod;
+import com.newyorktaxi.mapper.DatePeriodParamsMapper;
+import com.newyorktaxi.mapper.TotalResponseMapper;
+import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.impl.GetTotalUseCase;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +26,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ReportControllerTest {
 
     @Mock
-    TotalMapper totalMapper;
+    DatePeriodParamsMapper totalMapper;
+    @Mock
+    TotalResponseMapper totalResponseMapper;
     @Mock
     GetTotalUseCase getTotalUseCase;
 
@@ -35,10 +39,12 @@ class ReportControllerTest {
     @DisplayName("Should successfully return total response")
     void getTotal() {
         final TotalResponse expected = TestData.buildTotalResponse();
-        final DatePeriod totalRequest = TestData.buildDatePeriod();
+        final DatePeriodParams totalRequest = TestData.buildDatePeriod();
+        final Total total = TestData.buildTotal();
 
-        when(totalMapper.toDatePeriod(TestData.YEAR, TestData.MONTH, TestData.DAY)).thenReturn(totalRequest);
-        when(getTotalUseCase.execute(totalRequest)).thenReturn(expected);
+        when(totalMapper.toDatePeriodParams(TestData.YEAR, TestData.MONTH, TestData.DAY)).thenReturn(totalRequest);
+        when(getTotalUseCase.execute(totalRequest)).thenReturn(total);
+        when(totalResponseMapper.toTotalResponse(total)).thenReturn(expected);
 
         final TotalResponse actual = reportController.getTotal(TestData.YEAR, TestData.MONTH, TestData.DAY);
 
