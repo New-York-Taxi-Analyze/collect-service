@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+kafka-config:
+  bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+  schema-registry-url-key: schema.registry.url
+  schema-registry-url: http://localhost:8081
+  num-of-partitions: 3
+  replication-factor: 3
+
+kafka-producer-config:
+  key-serializer-class: org.apache.kafka.common.serialization.StringSerializer
+  value-serializer-class: io.confluent.kafka.serializers.KafkaAvroSerializer
+  compression-type: snappy
+  acks: all
+  batch-size: 16384
+  batch-size-boost-factor: 100
+  linger-ms: 5
+  request-timeout-ms: 60000
+  retry-count: 5
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      compression-type: snappy
+      acks: all
+      batch-size: 16384
+      retries: 5
+
+  datasource:
+    url: jdbc:postgresql://localhost:5555/service
+    username: service
+    password: service
+  flyway:
+    enabled: true
+    schemas: service
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true

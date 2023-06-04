@@ -1,5 +1,7 @@
 # collect-service
 
+KeyClock: http://localhost:8080/realms/collection-service/.well-known/openid-configuration
+
 curl --location 'http://localhost:8080/api/v1/createUser' \
 --header 'Content-Type: application/json' \
 --data-raw '{

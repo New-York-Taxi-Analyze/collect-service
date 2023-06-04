@@ -5,10 +5,10 @@ import com.newyorktaxi.mapper.TotalResponseMapper;
 import com.newyorktaxi.mapper.TripInfoParamsMapper;
 import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
-import com.newyorktaxi.usecase.params.DatePeriodParams;
-import com.newyorktaxi.usecase.params.TripInfoParams;
 import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.usecase.FunctionalUseCase;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
+import com.newyorktaxi.usecase.params.TripInfoParams;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
@@ -16,13 +16,14 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -38,14 +39,14 @@ public class ReportController {
     FunctionalUseCase<DatePeriodParams, Total> getTotalUseCase;
     FunctionalUseCase<TripInfoParams, Void> messageUseCase;
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping(value = "/message", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> message(@RequestBody TripInfoRequest messageRequest) {
+    public void message(@RequestBody TripInfoRequest messageRequest) {
         log.info("Sending message: {}", messageRequest);
         final TripInfoParams tripInfoParams = tripInfoParamsMapper.toTripInfoParams(messageRequest);
 
         messageUseCase.execute(tripInfoParams);
         log.debug("Message sent successfully with data: {}", tripInfoParams);
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/total")

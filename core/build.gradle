@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'org.flywaydb.flyway' version '7.15.0'
 }
 
 group = 'com.newyorktaxi'
@@ -10,6 +11,14 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+}
+
+flyway {
+	url = 'jdbc:postgresql://localhost:5555/service'
+	user = 'service'
+	password = 'service'
+	baselineOnMigrate = true
+	baselineVersion = '1.0' // Specify the version to use for baseline
 }
 
 compileJava {
@@ -30,6 +39,8 @@ dependencies {
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+
+	implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
 
 	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
 
