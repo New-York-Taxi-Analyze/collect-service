@@ -1,9 +1,10 @@
-package com.newyorktaxi.controller;
+package unit.com.newyorktaxi.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.newyorktaxi.TestData;
+import unit.com.newyorktaxi.TestData;
+import com.newyorktaxi.controller.ReportController;
 import com.newyorktaxi.mapper.DatePeriodParamsMapper;
 import com.newyorktaxi.mapper.TotalResponseMapper;
 import com.newyorktaxi.model.Total;

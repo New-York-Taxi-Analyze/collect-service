@@ -1,4 +1,4 @@
-package com.newyorktaxi;
+package unit.com.newyorktaxi;
 
 import org.springframework.boot.test.context.SpringBootTest;
 

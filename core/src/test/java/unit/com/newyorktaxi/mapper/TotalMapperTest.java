@@ -1,8 +1,10 @@
-package com.newyorktaxi.mapper;
+package unit.com.newyorktaxi.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.newyorktaxi.TestData;
+import unit.com.newyorktaxi.TestData;
+import com.newyorktaxi.mapper.DatePeriodParamsMapper;
+import com.newyorktaxi.mapper.DatePeriodParamsMapperImpl;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;

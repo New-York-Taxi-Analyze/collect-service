@@ -18,7 +18,7 @@ import java.time.Instant;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class TripInfoRequest {
-    Short vendorId;
+    short vendorId;
     Instant tpepPickupDatetime;
     Instant tpepDropoffDatetime;
     Integer passengerCount;
