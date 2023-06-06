@@ -1,4 +1,4 @@
-package unit.com.newyorktaxi;
+package com.newyorktaxi;
 
 import com.newyorktaxi.model.PaymentType;
 import com.newyorktaxi.model.RateCodeType;

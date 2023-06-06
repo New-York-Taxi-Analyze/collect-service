@@ -1,19 +1,24 @@
-package unit.com.newyorktaxi.mapper;
+package com.newyorktaxi.mapper;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import unit.com.newyorktaxi.TestData;
-import com.newyorktaxi.mapper.DatePeriodParamsMapper;
-import com.newyorktaxi.mapper.DatePeriodParamsMapperImpl;
+import com.newyorktaxi.TestData;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
+@SpringBootTest(classes = {DatePeriodParamsMapperImpl.class})
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class TotalMapperTest {
 
-    private static final DatePeriodParamsMapper mapper = new DatePeriodParamsMapperImpl();
+    @Autowired
+    DatePeriodParamsMapper mapper;
 
     @Test
     @DisplayName("Should successfully map request data to date period")

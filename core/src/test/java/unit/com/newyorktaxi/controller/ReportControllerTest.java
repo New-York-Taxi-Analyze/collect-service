@@ -1,16 +1,12 @@
-package unit.com.newyorktaxi.controller;
+package com.newyorktaxi.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
-import unit.com.newyorktaxi.TestData;
-import com.newyorktaxi.controller.ReportController;
+import com.newyorktaxi.TestData;
 import com.newyorktaxi.mapper.DatePeriodParamsMapper;
 import com.newyorktaxi.mapper.TotalResponseMapper;
 import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
-import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.impl.GetTotalUseCase;
+import com.newyorktaxi.usecase.params.DatePeriodParams;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +16,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @Tag("unit")
 @ExtendWith(MockitoExtension.class)

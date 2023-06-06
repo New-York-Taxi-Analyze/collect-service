@@ -1,12 +1,11 @@
 package com.newyorktaxi.controller;
 
 import com.newyorktaxi.CollectServiceApplication;
-import com.newyorktaxi.avro.model.TaxiMessage;
+import com.newyorktaxi.TestData;
 import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.repository.UserRepository;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.AccessLevel;
@@ -14,9 +13,7 @@ import lombok.experimental.FieldDefaults;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +31,6 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
-import unit.com.newyorktaxi.TestData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +38,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @EmbeddedKafka(topics = {"taxi-messages"}, partitions = 3)
 @TestPropertySource(properties = {"spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-class ReportControllerTest {
+class ReportControllerIntegrationTest {
 
     @Autowired
     TestRestTemplate restTemplate;
