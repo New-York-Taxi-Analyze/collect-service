@@ -24,7 +24,7 @@ spring:
     password: service
   flyway:
     enabled: true
-    schemas: service
+    schemas: public
   jpa:
     show-sql: true
     hibernate:

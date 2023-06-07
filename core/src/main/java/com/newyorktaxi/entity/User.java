@@ -26,13 +26,14 @@ import org.hibernate.annotations.GenericGenerator;
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO, generator="native")
-    @GenericGenerator(name = "native",strategy = "native")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator="native")
     Integer id;
     @Email
     @Column(nullable = false, unique = true)
     String email;
-    @NotBlank String password;
-    @NotBlank String role;
+    @Column(nullable = false)
+    String password;
+    @Column(nullable = false)
+    String role;
 
 }
