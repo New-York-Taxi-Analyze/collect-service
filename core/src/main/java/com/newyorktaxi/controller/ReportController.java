@@ -62,9 +62,4 @@ public class ReportController {
         log.debug("Total count retrieved successfully with data: {}", totalResponse);
         return totalResponse;
     }
-
-    @GetMapping(value = "/test")
-    public String test() {
-        return "Hello World";
-    }
 }

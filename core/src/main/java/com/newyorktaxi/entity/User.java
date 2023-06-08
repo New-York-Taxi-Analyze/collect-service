@@ -13,7 +13,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.GenericGenerator;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -30,10 +29,13 @@ public class User {
     Integer id;
     @Email
     @Column(nullable = false, unique = true)
+    @NotBlank
     String email;
     @Column(nullable = false)
+    @NotBlank
     String password;
     @Column(nullable = false)
+    @NotBlank
     String role;
 
 }

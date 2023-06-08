@@ -4,6 +4,7 @@ import com.newyorktaxi.mapper.UserParamsMapper;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.usecase.FunctionalUseCase;
 import com.newyorktaxi.usecase.params.UserParams;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,7 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/createUser", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void createUser(@RequestBody UserRequest userRequest) {
+    public void createUser(@RequestBody @Valid UserRequest userRequest) {
         final UserParams userParams = userParamsMapper.toUserParams(userRequest);
         createUserUseCase.execute(userParams);
     }

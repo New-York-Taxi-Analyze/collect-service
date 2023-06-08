@@ -6,8 +6,6 @@ import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.repository.UserRepository;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -31,6 +29,9 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

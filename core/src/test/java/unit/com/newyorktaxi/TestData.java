@@ -8,6 +8,7 @@ import com.newyorktaxi.model.TotalResponse;
 import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
+import com.newyorktaxi.usecase.params.TripInfoParams;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -65,6 +66,28 @@ public class TestData {
                 .tollsAmount(BigDecimal.TEN)
                 .improvementSurcharge(BigDecimal.TEN)
                 .totalAmount(BigDecimal.TEN)
+                .build();
+    }
+
+    public TripInfoParams buildTripInfoParams() {
+        return TripInfoParams.builder()
+                .vendorId(1)
+                .tpepPickupDatetime(Instant.now())
+                .tpepDropoffDatetime(Instant.now())
+                .passengerCount(1)
+                .tripDistance(1.0f)
+                .rateCodeId(RateCodeType.NEWARK)
+                .storeAndFwdFlag(StoreAndFwdFlagType.N)
+                .puLocationId(1)
+                .doLocationId(1)
+                .paymentType(PaymentType.CASH)
+                .fareAmount(BigDecimal.TEN.doubleValue())
+                .extra(BigDecimal.TEN.doubleValue())
+                .mtaTax(BigDecimal.TEN.doubleValue())
+                .tipAmount(BigDecimal.TEN.doubleValue())
+                .tollsAmount(BigDecimal.TEN.doubleValue())
+                .improvementSurcharge(BigDecimal.TEN.doubleValue())
+                .totalAmount(BigDecimal.TEN.doubleValue())
                 .build();
     }
 
