@@ -6,12 +6,5 @@ services:
       POSTGRES_DB: service
       POSTGRES_USER: service
       POSTGRES_PASSWORD: service
-      PGPORT: 5555
-    networks:
-      - postgres-network
     ports:
-      - 5555:5555
-
-networks:
-  postgres-network:
-    name: postgres-network
+      - 5555:5432

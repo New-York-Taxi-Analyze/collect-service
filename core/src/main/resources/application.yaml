@@ -8,15 +8,17 @@ spring:
       schema:
         registry:
           url: http://localhost:8081
-      num-of-partitions: 3
-      replication-factor: 3
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       compression-type: snappy
-      acks: all
       batch-size: 16384
       retries: 5
+      properties:
+        acks: all
+        retry:
+          backoff:
+            ms: 1000
 
   datasource:
     url: jdbc:postgresql://localhost:5555/service
@@ -27,6 +29,7 @@ spring:
     schemas: public
   jpa:
     show-sql: true
+    open-in-view: true
     hibernate:
       ddl-auto: validate
     properties:

@@ -13,6 +13,7 @@ import com.newyorktaxi.usecase.impl.MessageUseCase;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
 import lombok.AccessLevel;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -58,7 +59,8 @@ class ReportControllerTest {
     @Test
     @WithMockUser
     @DisplayName("Should successfully return HttpStatus.OK for the message response")
-    void testMessage() throws Exception {
+    @SneakyThrows
+    void testMessage() {
         final TripInfoRequest tripInfoRequest = TestData.buildTripInfoRequest();
         final TripInfoParams tripInfoParams = TestData.buildTripInfoParams();
         final String json = objectMapper.writeValueAsString(tripInfoRequest);
@@ -76,7 +78,8 @@ class ReportControllerTest {
     @Test
     @WithMockUser
     @DisplayName("Should successfully return total response")
-    void testGetTotal() throws Exception {
+    @SneakyThrows
+    void testGetTotal() {
         final TotalResponse expected = TestData.buildTotalResponse();
         final DatePeriodParams totalRequest = TestData.buildDatePeriod();
         final Total total = TestData.buildTotal();

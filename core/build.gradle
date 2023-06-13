@@ -1,6 +1,7 @@
 plugins {
 	id 'java'
 	id 'org.flywaydb.flyway' version '7.15.0'
+	id 'com.avast.gradle.docker-compose' version '0.16.12'
 }
 
 group = 'com.newyorktaxi'
@@ -68,6 +69,16 @@ sourceSets{
 	test {
 		java.srcDirs = ['src/test/java/unit', 'src/test/java/intg']
 	}
+}
+
+dockerCompose {
+	useComposeFiles = ['../docker/dockerPostgres.yml', '../docker/dockerKafka.yml']
+	startedServices = ['postgres', 'kafka1', 'kafka2', 'kafka3', 'kafka-schema-registry']
+}
+
+test {
+	dependsOn composeUp
+	finalizedBy composeDown
 }
 
 tasks.named('test') {
