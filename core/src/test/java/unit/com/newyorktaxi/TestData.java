@@ -1,5 +1,8 @@
 package com.newyorktaxi;
 
+import com.newyorktaxi.avro.model.TaxiMessage;
+import com.newyorktaxi.entity.FailureMessage;
+import com.newyorktaxi.entity.StatusEnum;
 import com.newyorktaxi.model.PaymentType;
 import com.newyorktaxi.model.RateCodeType;
 import com.newyorktaxi.model.StoreAndFwdFlagType;
@@ -13,6 +16,7 @@ import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.UUID;
 
 @UtilityClass
 public class TestData {
@@ -95,6 +99,17 @@ public class TestData {
         return UserRequest.builder()
                 .email(email)
                 .password(password)
+                .build();
+    }
+
+    public FailureMessage buildFailureMessage() {
+        return FailureMessage.builder()
+                .key(UUID.randomUUID())
+                .topic("taxi-messages")
+                .message(TaxiMessage.newBuilder()
+                        .setVendorId(1)
+                        .build())
+                .status(StatusEnum.RETRY)
                 .build();
     }
 }

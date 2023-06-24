@@ -43,26 +43,32 @@ dependencies {
 
 	implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
 
-	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
+	// shedlock for distributed lock management
+	implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-spring', version: '5.4.0'
+	implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-provider-jdbc-template', version: '5.4.0'
 
 	compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
 	testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
 	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
 	testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
 
-	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: springBootVersion
-	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: springBootVersion
+	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
 	implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
 
+	testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
+	testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.0.3'
+
+	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
 	compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
 	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
 	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.0'
-	testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: springBootVersion
+	testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '3.0.8'
 }
 
 sourceSets{

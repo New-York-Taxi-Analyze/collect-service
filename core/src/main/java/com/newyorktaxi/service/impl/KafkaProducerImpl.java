@@ -1,5 +1,9 @@
 package com.newyorktaxi.service.impl;
 
+import com.newyorktaxi.avro.model.TaxiMessage;
+import com.newyorktaxi.entity.FailureMessage;
+import com.newyorktaxi.mapper.FailureMessageMapper;
+import com.newyorktaxi.repository.FailureMessageRepository;
 import com.newyorktaxi.service.KafkaProducer;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,6 +17,7 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 
 @Slf4j
@@ -22,6 +27,8 @@ import java.util.function.BiConsumer;
 public class KafkaProducerImpl<K extends Serializable, V extends SpecificRecordBase> implements KafkaProducer<K, V> {
 
     KafkaTemplate<K, V> kafkaTemplate;
+    FailureMessageRepository failureMessageRepository;
+    FailureMessageMapper mapper;
 
     @Override
     public void send(String topicName, K key, V message) {
@@ -31,8 +38,14 @@ public class KafkaProducerImpl<K extends Serializable, V extends SpecificRecordB
             kafkaTemplate.send(topicName, key, message)
                     .whenComplete(callback());
         } catch (KafkaException e) {
-            log.error("Error to send message: {} to topic: {} with exception: {}",
-                    message, topicName, e.getMessage(), e);
+            log.error("Error to send message: {} to topic: {} with exception: {}", message, topicName, e.getMessage(), e);
+            if (key instanceof String keyId && message instanceof TaxiMessage data) {
+                final FailureMessage failureMessage = mapper.toFailureMessage(topicName, UUID.fromString(keyId), data);
+                if (!failureMessageRepository.existsById(failureMessage.getKey())) {
+                    failureMessageRepository.save(failureMessage);
+                    log.info("Message saved to retry table: {}", failureMessage);
+                }
+            }
             throw e;
         }
     }
