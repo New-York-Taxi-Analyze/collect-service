@@ -12,6 +12,7 @@ import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
+import io.r2dbc.postgresql.codec.Json;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
@@ -106,10 +107,14 @@ public class TestData {
         return FailureMessage.builder()
                 .key(UUID.randomUUID())
                 .topic("taxi-messages")
-                .message(TaxiMessage.newBuilder()
-                        .setVendorId(1)
-                        .build())
+                .message(Json.of(buildTaxiMessage().toString()))
                 .status(StatusEnum.RETRY)
+                .build();
+    }
+
+    private TaxiMessage buildTaxiMessage() {
+        return TaxiMessage.newBuilder()
+                .setVendorId(1)
                 .build();
     }
 }

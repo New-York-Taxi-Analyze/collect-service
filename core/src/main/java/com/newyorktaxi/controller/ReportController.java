@@ -4,31 +4,20 @@ import com.newyorktaxi.mapper.DatePeriodParamsMapper;
 import com.newyorktaxi.mapper.TotalResponseMapper;
 import com.newyorktaxi.mapper.TripInfoParamsMapper;
 import com.newyorktaxi.model.Total;
-import com.newyorktaxi.model.TotalResponse;
 import com.newyorktaxi.model.TripInfoRequest;
-import com.newyorktaxi.usecase.FunctionalUseCase;
+import com.newyorktaxi.usecase.MonoUseCase;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.server.ServerRequest;
+import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Mono;
 
-@Slf4j
-@RestController
-@RequestMapping(path = "/api/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@Component
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReportController {
@@ -36,30 +25,27 @@ public class ReportController {
     DatePeriodParamsMapper datePeriodParamsMapper;
     TripInfoParamsMapper tripInfoParamsMapper;
     TotalResponseMapper totalResponseMapper;
-    FunctionalUseCase<DatePeriodParams, Total> getTotalUseCase;
-    FunctionalUseCase<TripInfoParams, Void> messageUseCase;
+    MonoUseCase<DatePeriodParams, Total> getTotalUseCase;
+    MonoUseCase<TripInfoParams, Void> messageUseCase;
 
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(value = "/message", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void message(@RequestBody TripInfoRequest messageRequest) {
-        log.info("Sending message: {}", messageRequest);
-        final TripInfoParams tripInfoParams = tripInfoParamsMapper.toTripInfoParams(messageRequest);
-
-        messageUseCase.execute(tripInfoParams);
-        log.debug("Message sent successfully with data: {}", tripInfoParams);
+    public Mono<ServerResponse> message(ServerRequest request) {
+        return request.bodyToMono(TripInfoRequest.class)
+                .map(tripInfoParamsMapper::toTripInfoParams)
+                .flatMap(messageUseCase::execute)
+                .then(Mono.defer(() -> ServerResponse.ok()
+                        .build()));
     }
 
-    @GetMapping(value = "/total")
-    public TotalResponse getTotal(@RequestParam @Positive Integer year,
-                                  @RequestParam(required = false) @Min(1) @Max(12) Integer month,
-                                  @RequestParam(required = false) @Min(1) @Max(31) Integer day) {
-        log.info("Getting total count with params: year={}, month={}, day={}", year, month, day);
+    public Mono<ServerResponse> total(ServerRequest request) {
+        final int year = Integer.parseInt(request.queryParam("year").orElseThrow());
+        final int month = Integer.parseInt(request.queryParam("month").orElseThrow());
+        final int day = Integer.parseInt(request.queryParam("day").orElseThrow());
 
-        final DatePeriodParams datePeriodParams = datePeriodParamsMapper.toDatePeriodParams(year, month, day);
-        final Total total = getTotalUseCase.execute(datePeriodParams);
-        final TotalResponse totalResponse = totalResponseMapper.toTotalResponse(total);
-
-        log.debug("Total count retrieved successfully with data: {}", totalResponse);
-        return totalResponse;
+        return Mono.just(datePeriodParamsMapper.toDatePeriodParams(year, month, day))
+                .flatMap(getTotalUseCase::execute)
+                .map(totalResponseMapper::toTotalResponse)                .flatMap(totalResponse -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(totalResponse))
+                .switchIfEmpty(ServerResponse.notFound().build());
     }
 }

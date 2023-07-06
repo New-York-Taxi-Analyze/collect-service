@@ -2,12 +2,12 @@ package com.newyorktaxi.repository;
 
 import com.newyorktaxi.entity.FailureMessage;
 import com.newyorktaxi.entity.StatusEnum;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
 
-import java.util.List;
 import java.util.UUID;
 
-public interface FailureMessageRepository extends CrudRepository<FailureMessage, UUID> {
+public interface FailureMessageRepository extends ReactiveCrudRepository<FailureMessage, UUID> {
 
-    List<FailureMessage> findAllByStatus(StatusEnum status);
+    Flux<FailureMessage> findAllByStatus(StatusEnum status);
 }

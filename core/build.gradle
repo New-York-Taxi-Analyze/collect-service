@@ -34,12 +34,20 @@ compileJava {
 dependencies {
 	implementation project(':avro')
 
+	compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
+
 	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.8'
 	implementation group: 'org.hibernate.validator', name:'hibernate-validator', version:'8.0.0.Final'
 
 	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-r2dbc', version: springBootVersion
+
+	implementation(group: 'io.r2dbc', name: 'r2dbc-postgresql', version: '0.8.13.RELEASE') {
+		exclude group: 'io.projectreactor.netty', module: 'reactor-netty'
+	}
+
 
 	implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
 
@@ -54,7 +62,8 @@ dependencies {
 
 	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
 	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
+	implementation group: 'io.projectreactor.kafka', name: 'reactor-kafka', version: '1.3.18'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
 	implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
 	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
 
@@ -69,6 +78,7 @@ dependencies {
 	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
 	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.0'
 	testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '3.0.8'
+	testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.5.7'
 }
 
 sourceSets{

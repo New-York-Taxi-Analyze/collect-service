@@ -1,5 +1,7 @@
 package com.newyorktaxi.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newyorktaxi.CollectServiceApplication;
 import com.newyorktaxi.TestData;
 import com.newyorktaxi.model.TripInfoRequest;
@@ -7,6 +9,7 @@ import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.repository.UserRepository;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import lombok.AccessLevel;
+import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -52,6 +55,9 @@ class ReportControllerIntegrationTest {
 
     Consumer<String, Object> consumer;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @BeforeEach
     void setUp() {
         final UserRequest userRequest = TestData.buildUserRequest(TestData.USER_EMAIL, TestData.USER_PASSWORD);
@@ -64,7 +70,7 @@ class ReportControllerIntegrationTest {
         assertThat(exchange.getStatusCode().is2xxSuccessful()).isTrue();
 
         final Map<String, Object> configs = new HashMap<>(
-            KafkaTestUtils.consumerProps("group_test", "true", embeddedKafkaBroker));
+                KafkaTestUtils.consumerProps("group_test", "true", embeddedKafkaBroker));
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         configs.put("schema.registry.url", "http://localhost:8081");
         consumer = new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), new KafkaAvroDeserializer()).createConsumer();
@@ -73,7 +79,9 @@ class ReportControllerIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        userRepository.findByEmail(TestData.USER_EMAIL).ifPresent(userRepository::delete);
+        userRepository.findByEmail(TestData.USER_EMAIL)
+                .flatMap(userRepository::delete)
+                .block();
         consumer.close();
     }
 
@@ -81,9 +89,10 @@ class ReportControllerIntegrationTest {
     @Timeout(5)
     void testMessage() {
         final TripInfoRequest tripInfoRequest = TestData.buildTripInfoRequest();
+        final String token = authToken();
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBasicAuth(TestData.USER_EMAIL, TestData.USER_PASSWORD);
+        headers.setBearerAuth(token);
 
         final HttpEntity<TripInfoRequest> request = new HttpEntity<>(tripInfoRequest, headers);
         final ResponseEntity<String> exchange = restTemplate.exchange("/api/v1/message", HttpMethod.POST, request,
@@ -93,5 +102,19 @@ class ReportControllerIntegrationTest {
 
         assertThat(singleRecord).isNotNull();
         assertThat(exchange.getStatusCode().is2xxSuccessful()).isTrue();
+    }
+
+    @SneakyThrows
+    private String authToken() {
+        final UserRequest userRequest = TestData.buildUserRequest(TestData.USER_EMAIL, TestData.USER_PASSWORD);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        final HttpEntity<UserRequest> request = new HttpEntity<>(userRequest, headers);
+        final ResponseEntity<String> exchange = restTemplate.exchange("/api/v1/login", HttpMethod.POST, request,
+                String.class);
+
+        assertThat(exchange.getStatusCode().is2xxSuccessful()).isTrue();
+        final JsonNode jsonNode = objectMapper.readTree(exchange.getBody());
+        return jsonNode.get("token").asText();
     }
 }

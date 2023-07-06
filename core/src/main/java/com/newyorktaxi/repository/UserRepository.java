@@ -1,11 +1,12 @@
 package com.newyorktaxi.repository;
 
 import com.newyorktaxi.entity.User;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
-import java.util.Optional;
+@Repository
+public interface UserRepository extends ReactiveCrudRepository<User, Long> {
 
-public interface UserRepository extends CrudRepository<User, Long> {
-
-    Optional<User> findByEmail(String email);
+    Mono<User> findByEmail(String email);
 }

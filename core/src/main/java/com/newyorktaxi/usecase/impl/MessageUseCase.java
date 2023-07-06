@@ -1,30 +1,37 @@
 package com.newyorktaxi.usecase.impl;
 
-import com.newyorktaxi.avro.model.TaxiMessage;
 import com.newyorktaxi.mapper.TaxiMessageMapper;
+import com.newyorktaxi.kafka.KafkaProducer;
+import com.newyorktaxi.usecase.MonoUseCase;
 import com.newyorktaxi.usecase.params.TripInfoParams;
-import com.newyorktaxi.service.KafkaProducer;
-import com.newyorktaxi.usecase.FunctionalUseCase;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
-public class MessageUseCase implements FunctionalUseCase<TripInfoParams, Void> {
+public class MessageUseCase implements MonoUseCase<TripInfoParams, Void> {
 
-    KafkaProducer<String, TaxiMessage> kafkaProducer;
+    @Value("${kafka.topic.name}")
+    @NonFinal
+    String topicName;
+
+    KafkaProducer kafkaProducer;
     TaxiMessageMapper taxiMessageMapper;
 
     @Override
-    public Void execute(TripInfoParams params) {
-        final TaxiMessage taxiMessage = taxiMessageMapper.toTaxiMessage(params);
-
-        kafkaProducer.send("taxi-messages", UUID.randomUUID().toString(), taxiMessage);
-
-        return null;
+    public Mono<Void> execute(TripInfoParams params) {
+        return Mono.just(params)
+                .map(taxiMessageMapper::toTaxiMessage)
+                .flatMap(taxiMessage -> {
+                    kafkaProducer.send(topicName, UUID.randomUUID(), taxiMessage);
+                    return Mono.empty();
+                });
     }
 }

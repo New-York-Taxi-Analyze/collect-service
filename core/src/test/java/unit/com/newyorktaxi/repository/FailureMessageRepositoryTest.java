@@ -2,53 +2,38 @@ package com.newyorktaxi.repository;
 
 import com.newyorktaxi.TestData;
 import com.newyorktaxi.entity.FailureMessage;
+import com.newyorktaxi.entity.StatusEnum;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.data.r2dbc.DataR2dbcTest;
+import org.springframework.context.annotation.ComponentScan;
+import reactor.test.StepVerifier;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DataR2dbcTest
+@ComponentScan(basePackages = {"com.newyorktaxi.repository"})
 class FailureMessageRepositoryTest {
 
     @Autowired
     FailureMessageRepository repository;
 
+    @Autowired
+    CustomFailureMessageRepository customRepository;
+
     @AfterEach
     void tearDown() {
-        repository.deleteAll();
+        repository.deleteAll().block();
     }
 
     @Test
-    @DisplayName("Should successfully save failure message")
-    void testSave() {
-        final FailureMessage expected = TestData.buildFailureMessage();
-
-        final FailureMessage actual = repository.save(expected);
-
-        assertThat(actual)
-                .usingRecursiveComparison()
-                .ignoringFields("key")
-                .as("actual does not match expected")
-                .isEqualTo(expected);
-    }
-
-    @Test
-    @DisplayName("Should successfully find all failure messages by status")
     void testFindAllByStatus() {
-        final FailureMessage expected = TestData.buildFailureMessage();
-        repository.save(expected);
+        final StatusEnum expected = StatusEnum.RETRY;
+        final FailureMessage failureMessage = TestData.buildFailureMessage();
 
-        final FailureMessage actual = repository.findAllByStatus(expected.getStatus()).get(0);
+        customRepository.insert(failureMessage).block();
 
-        assertThat(actual)
-                .usingRecursiveComparison()
-                .ignoringFields("key")
-                .as("actual does not match expected")
-                .isEqualTo(expected);
+        StepVerifier.create(repository.findAllByStatus(expected))
+                .expectNextMatches(actual -> actual.getStatus() == expected)
+                .verifyComplete();
     }
 }

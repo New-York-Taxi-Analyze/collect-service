@@ -4,8 +4,9 @@ import com.newyorktaxi.CollectServiceApplication;
 import com.newyorktaxi.TestData;
 import com.newyorktaxi.avro.model.TaxiMessage;
 import com.newyorktaxi.entity.StatusEnum;
+import com.newyorktaxi.kafka.KafkaProducer;
+import com.newyorktaxi.repository.CustomFailureMessageRepository;
 import com.newyorktaxi.repository.FailureMessageRepository;
-import com.newyorktaxi.service.KafkaProducer;
 import com.newyorktaxi.usecase.impl.RetryFailedMessageUseCase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,12 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.TestPropertySource;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -35,26 +36,33 @@ class RetryFailedMessageTest {
     RetryFailedMessageUseCase retryFailedMessageUseCase;
 
     @Autowired
+    CustomFailureMessageRepository customFailureMessageRepository;
+
+    @Autowired
     FailureMessageRepository repository;
 
     @MockBean
-    KafkaProducer<String, TaxiMessage> kafkaProducer;
+    KafkaProducer kafkaProducer;
 
     @BeforeEach
     void setUp() {
-        repository.saveAll(List.of(TestData.buildFailureMessage(), TestData.buildFailureMessage()));
+        customFailureMessageRepository.insert(TestData.buildFailureMessage())
+                .subscribe();
     }
 
     @AfterEach
     void tearDown() {
-        repository.deleteAll();
+        repository.deleteAll().block();
     }
 
     @Test
     void retry() {
-        doNothing().when(kafkaProducer).send(anyString(), anyString(),  any(TaxiMessage.class));
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertThat(repository.findAllByStatus(StatusEnum.SUCCESS).size()).isEqualTo(2);
-        });
+        doNothing().when(kafkaProducer).send(anyString(), any(UUID.class),  any(TaxiMessage.class));
+
+        Mono.delay(Duration.ofSeconds(5))
+                .thenMany(repository.findAllByStatus(StatusEnum.SUCCESS))
+                .as(StepVerifier::create)
+                .expectNextCount(1)
+                .verifyComplete();
     }
 }

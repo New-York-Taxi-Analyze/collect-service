@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+kafka:
+  topic:
+    name: taxi-messages
+
 spring:
   kafka:
     bootstrap-servers: localhost:9092, localhost:9093, localhost:9094
@@ -16,34 +20,26 @@ spring:
       retries: 5
       properties:
         max.block.ms: 10000
+        delivery.timeout.ms: 10000 # 10 seconds set for tests
+        request.timeout.ms: 5000 # 5 seconds set for tests
         min.insync.replicas: 2
         acks: all
         retry:
           backoff:
             ms: 1000
-
   datasource:
     url: jdbc:postgresql://localhost:5555/service
     username: service
     password: service
-    hikari:
-      data-source-properties:
-        stringtype: unspecified
-      tomcat:
-        connection-properties:
-          stringtype: unspecified
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5555/service
+    username: service
+    password: service
+    repositories:
+      enabled: true
   flyway:
     enabled: true
     schemas: public
-  jpa:
-    show-sql: true
-    open-in-view: true
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
 
 scheduler:
   default-lock-at-most-for: PT30S
