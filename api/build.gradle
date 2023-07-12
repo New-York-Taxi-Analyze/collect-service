@@ -1,0 +1,40 @@
+plugins {
+    id 'application'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '3.1.1'
+}
+
+group = 'com.newyorktaxi'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_17
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'com.newyorktaxi.CollectServiceApplication'
+        )
+    }
+}
+
+bootJar {
+    mainClass = 'com.newyorktaxi.CollectServiceApplication'
+}
+
+dependencies {
+    implementation project(':core')
+
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8' // only for tests DefaultKafkaConsumerFactory
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
+
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+    testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '3.0.8'
+    testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.0'
+    testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.5.7'
+    testImplementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
+}
+
+test {
+    useJUnitPlatform()
+}

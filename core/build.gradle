@@ -1,7 +1,6 @@
 plugins {
-	id 'java'
-	id 'org.flywaydb.flyway' version '7.15.0'
-	id 'com.avast.gradle.docker-compose' version '0.16.12'
+    id 'org.flywaydb.flyway' version '7.15.0'
+    id 'com.avast.gradle.docker-compose' version '0.16.12'
 }
 
 group = 'com.newyorktaxi'
@@ -9,82 +8,61 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 flyway {
-	url = 'jdbc:postgresql://localhost:5555/service'
-	user = 'service'
-	password = 'service'
-	baselineOnMigrate = true
-	baselineVersion = '1.0' // Specify the version to use for baseline
-}
-
-compileJava {
-	options.compilerArgs += [
-			'-Amapstruct.suppressGeneratorTimestamp=true',
-			'-Amapstruct.suppressGeneratorVersionInfoComment=true',
-			'-Amapstruct.defaultComponentModel=spring',
-			'-Amapstruct.defaultInjectionStrategy=constructor'
-	]
+    url = 'jdbc:postgresql://localhost:5555/service'
+    user = 'service'
+    password = 'service'
+    baselineOnMigrate = true
+    baselineVersion = '1.0' // Specify the version to use for baseline
 }
 
 dependencies {
-	implementation project(':avro')
+    implementation project(':avro')
 
-	compileOnly group: 'jakarta.servlet', name: 'jakarta.servlet-api', version: '6.0.0'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.8'
+    implementation group: 'org.hibernate.validator', name: 'hibernate-validator', version: '8.0.0.Final'
 
-	implementation group: 'org.postgresql', name: 'postgresql', version: '42.3.8'
-	implementation group: 'org.hibernate.validator', name:'hibernate-validator', version:'8.0.0.Final'
+    implementation group: 'org.springframework.security', name: 'spring-security-crypto', version: '6.1.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-r2dbc', version: springBootVersion
 
-	implementation group: 'com.auth0', name: 'java-jwt', version: '4.4.0'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-r2dbc', version: springBootVersion
+    implementation(group: 'io.r2dbc', name: 'r2dbc-postgresql', version: '0.8.13.RELEASE') {
+        exclude group: 'io.projectreactor.netty', module: 'reactor-netty'
+    }
 
-	implementation(group: 'io.r2dbc', name: 'r2dbc-postgresql', version: '0.8.13.RELEASE') {
-		exclude group: 'io.projectreactor.netty', module: 'reactor-netty'
-	}
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
 
+    // shedlock for distributed lock management
+    implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-spring', version: shedlockVersion
+    implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-provider-jdbc-template', version: shedlockVersion
 
-	implementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.1'
+    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8'
+    implementation group: 'io.projectreactor.kafka', name: 'reactor-kafka', version: '1.3.18'
+    implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
 
-	// shedlock for distributed lock management
-	implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-spring', version: '5.4.0'
-	implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-provider-jdbc-template', version: '5.4.0'
+    // jackon for json serialization
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
 
-	compileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
-	testCompileOnly group: 'org.mapstruct', name: 'mapstruct', version: mapStructVersion
-	annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
-	testAnnotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: mapStructVersion
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.94.Final'
 
-	implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.0.2'
-	implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8'
-	implementation group: 'io.projectreactor.kafka', name: 'reactor-kafka', version: '1.3.18'
-	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
-	implementation group: 'io.confluent', name: 'kafka-avro-serializer', version: '7.3.1'
-	implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.15.2'
+    testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
+    testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.0.3'
 
-	testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
-	testImplementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-contract-stub-runner', version: '4.0.3'
-
-	annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.2.0'
-	compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-	testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
-	testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.0'
-	testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '3.0.8'
-	testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.5.7'
-}
-
-sourceSets{
-	test {
-		java.srcDirs = ['src/test/java/unit', 'src/test/java/intg']
-	}
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-r2dbc', version: springBootVersion
+    testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.5.7'
+    testImplementation group: 'org.testcontainers', name: 'postgresql', version: '1.18.3'
+    testImplementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.4'
 }
 
 dockerCompose {
@@ -98,5 +76,5 @@ test {
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

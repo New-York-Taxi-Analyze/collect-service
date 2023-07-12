@@ -9,5 +9,4 @@ public class CollectServiceApplication {
     public static void main(String[] args) {
         SpringApplication.run(CollectServiceApplication.class, args);
     }
-
 }

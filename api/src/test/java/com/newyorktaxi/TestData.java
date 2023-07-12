@@ -1,8 +1,5 @@
 package com.newyorktaxi;
 
-import com.newyorktaxi.avro.model.TaxiMessage;
-import com.newyorktaxi.entity.FailureMessage;
-import com.newyorktaxi.entity.StatusEnum;
 import com.newyorktaxi.model.PaymentType;
 import com.newyorktaxi.model.RateCodeType;
 import com.newyorktaxi.model.StoreAndFwdFlagType;
@@ -12,12 +9,10 @@ import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
-import io.r2dbc.postgresql.codec.Json;
 import lombok.experimental.UtilityClass;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.UUID;
 
 @UtilityClass
 public class TestData {
@@ -28,28 +23,6 @@ public class TestData {
     public static final Double TOTAL = 999.;
     public static final String USER_EMAIL = "test@test.test";
     public static final String USER_PASSWORD = "12345";
-
-    public TotalResponse buildTotalResponse() {
-        return TotalResponse.builder()
-                .total(TOTAL)
-                .date(YEAR + "/" + MONTH + "/" + DAY)
-                .build();
-    }
-
-    public Total buildTotal() {
-        return Total.builder()
-                .total(TOTAL)
-                .date(YEAR + "/" + MONTH + "/" + DAY)
-                .build();
-    }
-
-    public DatePeriodParams buildDatePeriod() {
-        return DatePeriodParams.builder()
-                .year(YEAR)
-                .month(MONTH)
-                .day(DAY)
-                .build();
-    }
 
     public TripInfoRequest buildTripInfoRequest() {
         short vendorId = 1;
@@ -96,25 +69,32 @@ public class TestData {
                 .build();
     }
 
+    public TotalResponse buildTotalResponse() {
+        return TotalResponse.builder()
+                .total(TOTAL)
+                .date(YEAR + "/" + MONTH + "/" + DAY)
+                .build();
+    }
+
+    public Total buildTotal() {
+        return Total.builder()
+                .total(TOTAL)
+                .date(YEAR + "/" + MONTH + "/" + DAY)
+                .build();
+    }
+
+    public DatePeriodParams buildDatePeriod() {
+        return DatePeriodParams.builder()
+                .year(YEAR)
+                .month(MONTH)
+                .day(DAY)
+                .build();
+    }
+
     public UserRequest buildUserRequest(String email, String password) {
         return UserRequest.builder()
                 .email(email)
                 .password(password)
-                .build();
-    }
-
-    public FailureMessage buildFailureMessage() {
-        return FailureMessage.builder()
-                .key(UUID.randomUUID())
-                .topic("taxi-messages")
-                .message(Json.of(buildTaxiMessage().toString()))
-                .status(StatusEnum.RETRY)
-                .build();
-    }
-
-    private TaxiMessage buildTaxiMessage() {
-        return TaxiMessage.newBuilder()
-                .setVendorId(1)
                 .build();
     }
 }

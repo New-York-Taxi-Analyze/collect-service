@@ -1,6 +1,6 @@
 package com.newyorktaxi.scheduler;
 
-import com.newyorktaxi.CollectServiceApplication;
+import com.newyorktaxi.TestApp;
 import com.newyorktaxi.TestData;
 import com.newyorktaxi.avro.model.TaxiMessage;
 import com.newyorktaxi.entity.StatusEnum;
@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
-@SpringBootTest(classes = {CollectServiceApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {TestApp.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = "scheduler.retry-failed-message.cron-expression=*/1 * * * * *")
 class RetryFailedMessageTest {
 

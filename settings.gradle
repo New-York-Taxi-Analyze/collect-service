@@ -22,5 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.name = 'collect-service'
 
-include 'core'
+include 'api'
 include 'avro'
+include 'core'

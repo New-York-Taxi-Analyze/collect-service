@@ -104,3 +104,4 @@ class ReportControllerTest {
                 .expectBody(TotalResponse.class).isEqualTo(expected);
     }
 }
+

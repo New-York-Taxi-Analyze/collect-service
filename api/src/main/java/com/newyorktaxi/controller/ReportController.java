@@ -1,5 +1,6 @@
 package com.newyorktaxi.controller;
 
+
 import com.newyorktaxi.mapper.DatePeriodParamsMapper;
 import com.newyorktaxi.mapper.TotalResponseMapper;
 import com.newyorktaxi.mapper.TripInfoParamsMapper;
@@ -11,12 +12,14 @@ import com.newyorktaxi.usecase.params.TripInfoParams;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Component
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,10 +33,14 @@ public class ReportController {
 
     public Mono<ServerResponse> message(ServerRequest request) {
         return request.bodyToMono(TripInfoRequest.class)
+                .doOnNext(tripInfoRequest -> log.info("Sending message: {}", tripInfoRequest))
                 .map(tripInfoParamsMapper::toTripInfoParams)
                 .flatMap(messageUseCase::execute)
-                .then(Mono.defer(() -> ServerResponse.ok()
-                        .build()));
+                .then(Mono.defer(() -> {
+                    log.debug("Message sent successfully");
+                    return ServerResponse.ok()
+                            .build();
+                }));
     }
 
     public Mono<ServerResponse> total(ServerRequest request) {

@@ -3,9 +3,7 @@ package com.newyorktaxi.configuration;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
@@ -19,19 +17,15 @@ import javax.sql.DataSource;
 @Configuration
 @EnableScheduling
 @EnableSchedulerLock(defaultLockAtMostFor = "${scheduler.default-lock-at-most-for}")
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ShedlockConfiguration {
 
-    @NonFinal
     @Value("${spring.datasource.url}")
     String dbUrl;
 
-    @NonFinal
     @Value("${spring.datasource.username}")
     String userName;
 
-    @NonFinal
     @Value("${spring.datasource.password}")
     String password;
 

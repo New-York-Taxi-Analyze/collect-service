@@ -118,3 +118,4 @@ class ReportControllerIntegrationTest {
         return jsonNode.get("token").asText();
     }
 }
+
