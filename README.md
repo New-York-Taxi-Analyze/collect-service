@@ -1,20 +1,41 @@
 # collect-service
 
+## Description
+
+Collect service is responsible for collecting data from the data source and storing it in the database.
+
+## Keycloak configuration for local development
 KeyClock: http://localhost:8080/realms/collection-service/.well-known/openid-configuration
 
-curl --location 'http://localhost:8080/api/v1/createUser' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "email": "user@test.com",
-    "password": "12345"
+## Create user
+```bash
+curl --request POST \
+  --url http://localhost:8080/api/v1/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "user2@test.com",
+	"password": "12345"
 }'
+```
 
-curl --location --request GET 'http://localhost:8080/api/v1/total?year=2023&month=4&day=30'
+## Get token
+```bash
+curl --request POST \
+  --url http://localhost:8080/api/v1/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"email": "user2@test.com",
+	"password": "12345"
+}'
+```
 
-curl --location --request POST 'http://localhost:8080/api/v1/message' \
---header 'Content-Type: application/json' \
---header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyQHRlc3QuY29tIiwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdLCJpYXQiOjE2ODQ3Nzc4MDQsImV4cCI6MTcxNDc3NzgwNH0.UdZiTqnzsiONrSOm_SDfl_feyzZNr23tfEveGmwPT14' \
---data-raw '{
+## Send message
+```bash
+curl --request POST \
+  --url http://localhost:8080/api/v1/message \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyQHRlc3QuY29tIiwiYXV0aG9yaXRpZXMiOlsiVVNFUiJdLCJpYXQiOjE2ODkxNTMwNTQsImV4cCI6MTcxOTE1MzA1NH0.ZYJhDXllHWv-VcvYFAwZNxIAd4mJ5SGByh3gcNBH3Lw' \
+  --header 'Content-Type: application/json' \
+  --data '{
     "vendor_id": 1,
     "tpep_pickup_datetime": "2023-11-04T12:34:56.000Z",
     "tpep_dropoff_datetime": "2023-11-05T12:34:56.000Z",
@@ -33,3 +54,4 @@ curl --location --request POST 'http://localhost:8080/api/v1/message' \
     "improvement_surcharge": "0.3",
     "total_amount": "10.8"
 }'
+```
