@@ -1,3 +1,13 @@
+spring:
+  application:
+    name: collection-service
+
+info:
+  app:
+    name: collection-service
+    description: Collection Service
+    version: 0.0.1-SNAPSHOT
+
 server:
   port: 8080
 
@@ -9,6 +19,15 @@ management:
     web:
       exposure:
         include: '*'
+
+eureka:
+  instance:
+    prefer-ip-address: false
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
 
 resilience4j:
   circuitbreaker:

@@ -23,6 +23,8 @@ bootJar {
 dependencies {
     implementation project(':core')
 
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-eureka-client', version: '4.0.2'
+
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8' // only for tests DefaultKafkaConsumerFactory
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
