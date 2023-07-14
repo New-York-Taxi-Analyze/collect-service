@@ -26,6 +26,13 @@ dependencies {
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8' // only for tests DefaultKafkaConsumerFactory
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springBootVersion
+
+    // resilience4j for circuit breaker
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: springBootVersion
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-circuitbreaker-reactor-resilience4j', version: '3.0.2'
+    implementation group: 'io.github.resilience4j', name: 'resilience4j-spring-boot3', version: '2.1.0'
+
 
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion

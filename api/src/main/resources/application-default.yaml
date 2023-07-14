@@ -1,0 +1,26 @@
+server:
+  port: 8080
+
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      badserver:
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 2
+
+badserver:
+  url: http://localhost:8081/badserver

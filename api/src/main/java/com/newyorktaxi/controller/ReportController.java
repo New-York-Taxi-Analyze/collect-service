@@ -9,22 +9,31 @@ import com.newyorktaxi.model.TripInfoRequest;
 import com.newyorktaxi.usecase.MonoUseCase;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ReportController {
 
+    @NonFinal
+    @Value("${badserver.url}")
+    String badServerUrl;
+
+    WebClient webClient;
     DatePeriodParamsMapper datePeriodParamsMapper;
     TripInfoParamsMapper tripInfoParamsMapper;
     TotalResponseMapper totalResponseMapper;
@@ -54,5 +63,23 @@ public class ReportController {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(totalResponse))
                 .switchIfEmpty(ServerResponse.notFound().build());
+    }
+
+    @CircuitBreaker(name = "badserver", fallbackMethod = "getHelloFallback")
+    public Mono<ServerResponse> getHello(ServerRequest request) {
+        return webClient.get()
+                .uri(badServerUrl)
+                .retrieve()
+                .bodyToMono(String.class)
+                .then(Mono.defer(() -> {
+                    log.debug("Message sent successfully");
+                    return ServerResponse.ok()
+                            .build();
+                }));
+    }
+
+    public Mono<ServerResponse> getHelloFallback(ServerRequest request, Exception ex) {
+        return ServerResponse.ok()
+                .bodyValue("Hello from fallback");
     }
 }

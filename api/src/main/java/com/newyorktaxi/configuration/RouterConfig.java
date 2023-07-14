@@ -23,6 +23,7 @@ public class RouterConfig {
     @Bean
     RouterFunction<ServerResponse> reportRoutes(ReportController handler) {
         return route((POST("/api/v1/message")), handler::message)
-                .andRoute((GET("/api/v1/total")), handler::total);
+                .andRoute((GET("/api/v1/total")), handler::total)
+                .andRoute((GET("/api/v1/hello")), handler::getHello);
     }
 }
