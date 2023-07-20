@@ -1,44 +1,43 @@
 package com.newyorktaxi.configuration;
 
-import com.newyorktaxi.filter.AuthenticationManager;
-import com.newyorktaxi.filter.SecurityContextRepository;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtGrantedAuthoritiesConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.Collection;
 
 @Configuration
 @EnableWebFluxSecurity
-@AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
-    AuthenticationManager customAuthenticationManager;
-    SecurityContextRepository jwtTokenGeneratorFilter;
-
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-        return http.csrf(ServerHttpSecurity.CsrfSpec::disable)
-                .authorizeExchange(authorize -> authorize
+    SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter) {
+        http.authorizeExchange(authorize -> authorize
                         .pathMatchers("/api/v1/total", "/api/v1/message").authenticated()
-                        .pathMatchers("/api/v1/login", "/api/v1/createUser", "/api/v1/hello").permitAll()
+                        .pathMatchers("/api/v1/hello").permitAll()
                         .anyExchange().authenticated()
                 )
-                .authenticationManager(customAuthenticationManager)
-                .securityContextRepository(jwtTokenGeneratorFilter)
-                .httpBasic(Customizer.withDefaults())
-                .build();
+                .oauth2ResourceServer((oauth2ResourceServer) -> oauth2ResourceServer.jwt((jwt) -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter)
+                        )
+                );
+
+        return http.build();
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    Converter<Jwt, Flux<GrantedAuthority>> jwtAuthoritiesConverter(Converter<Jwt, Collection<GrantedAuthority>> keycloakGrantedAuthoritiesConverter) {
+        return new ReactiveJwtGrantedAuthoritiesConverterAdapter(keycloakGrantedAuthoritiesConverter);
     }
 }

@@ -5,7 +5,13 @@
 Collect service is responsible for collecting data from the data source and storing it in the database.
 
 ## Keycloak configuration for local development
-KeyClock: http://localhost:8080/realms/collection-service/.well-known/openid-configuration
+KeyClock: http://localhost:8099/realms/collection-service/.well-known/openid-configuration
+
+## Export realm from keycloak to file (realm_file.json)
+/opt/keycloak/bin/kc.sh export --dir /opt/keycloak/data/import --realm newyorktaxi --users realm_file
+
+## Copy realm file from docker container to local machine
+docker cp <container-id>:/opt/keycloak/data/import/newyorktaxi-realm.json /Users/<user-name>/temp/newyorktaxi-realm.json
 
 ## Create user
 ```bash

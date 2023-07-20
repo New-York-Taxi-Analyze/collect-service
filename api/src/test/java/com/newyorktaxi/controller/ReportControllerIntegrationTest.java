@@ -1,25 +1,26 @@
 package com.newyorktaxi.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.newyorktaxi.CollectServiceApplication;
 import com.newyorktaxi.TestData;
 import com.newyorktaxi.model.TripInfoRequest;
-import com.newyorktaxi.model.UserRequest;
-import com.newyorktaxi.repository.UserRepository;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 import lombok.AccessLevel;
 import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -32,43 +33,41 @@ import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest(classes = {CollectServiceApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EmbeddedKafka(topics = {"taxi-messages"}, partitions = 3)
 @TestPropertySource(properties = {"spring.kafka.producer.bootstrap-servers=${spring.embedded.kafka.brokers}"})
 @FieldDefaults(level = AccessLevel.PRIVATE)
 class ReportControllerIntegrationTest {
 
-    @Autowired
-    TestRestTemplate restTemplate;
+    @Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
+    String jwkSetUri;
 
     @Autowired
-    UserRepository userRepository;
+    WebClient webClient;
+
+    @Autowired
+    TestRestTemplate restTemplate;
 
     @Autowired
     EmbeddedKafkaBroker embeddedKafkaBroker;
 
     Consumer<String, Object> consumer;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
     @BeforeEach
     void setUp() {
-        final UserRequest userRequest = TestData.buildUserRequest(TestData.USER_EMAIL, TestData.USER_PASSWORD);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        final HttpEntity<UserRequest> request = new HttpEntity<>(userRequest, headers);
-        final ResponseEntity<String> exchange = restTemplate.exchange("/api/v1/createUser", HttpMethod.POST, request,
-                String.class);
-
-        assertThat(exchange.getStatusCode().is2xxSuccessful()).isTrue();
-
         final Map<String, Object> configs = new HashMap<>(
                 KafkaTestUtils.consumerProps("group_test", "true", embeddedKafkaBroker));
         configs.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
@@ -79,14 +78,12 @@ class ReportControllerIntegrationTest {
 
     @AfterEach
     void tearDown() {
-        userRepository.findByEmail(TestData.USER_EMAIL)
-                .flatMap(userRepository::delete)
-                .block();
         consumer.close();
     }
 
     @Test
-    @Timeout(5)
+    @DisplayName("Should send message to kafka topic")
+    @Timeout(10)
     void testMessage() {
         final TripInfoRequest tripInfoRequest = TestData.buildTripInfoRequest();
         final String token = authToken();
@@ -106,16 +103,29 @@ class ReportControllerIntegrationTest {
 
     @SneakyThrows
     private String authToken() {
-        final UserRequest userRequest = TestData.buildUserRequest(TestData.USER_EMAIL, TestData.USER_PASSWORD);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        final HttpEntity<UserRequest> request = new HttpEntity<>(userRequest, headers);
-        final ResponseEntity<String> exchange = restTemplate.exchange("/api/v1/login", HttpMethod.POST, request,
-                String.class);
+        final URI authorizationURI = new URIBuilder(jwkSetUri).build();
+        final MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("client_id", Collections.singletonList("newyorktaxiclient"));
+        formData.put("client_secret", Collections.singletonList("d1JbuRKG2iS0tveThqFinwO1cMAGt1xm"));
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("username", Collections.singletonList("user@test.com"));
+        formData.put("password", Collections.singletonList("12345"));
 
-        assertThat(exchange.getStatusCode().is2xxSuccessful()).isTrue();
-        final JsonNode jsonNode = objectMapper.readTree(exchange.getBody());
-        return jsonNode.get("token").asText();
+        final String result = webClient.post()
+                .uri(authorizationURI)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        final JacksonJsonParser jsonParser = new JacksonJsonParser();
+
+        final String accessToken = jsonParser.parseMap(result)
+                .get("access_token")
+                .toString();
+        log.info("Access token: {}", accessToken);
+        return accessToken;
     }
 }
 

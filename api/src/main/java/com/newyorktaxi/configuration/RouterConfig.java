@@ -1,7 +1,6 @@
 package com.newyorktaxi.configuration;
 
 import com.newyorktaxi.controller.ReportController;
-import com.newyorktaxi.controller.UserController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
@@ -13,12 +12,6 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 @Configuration
 public class RouterConfig {
-
-    @Bean
-    RouterFunction<ServerResponse> userRoutes(UserController handler) {
-        return route((POST("/api/v1/createUser")), handler::createUser)
-                .andRoute((POST("/api/v1/login")), handler::login);
-    }
 
     @Bean
     RouterFunction<ServerResponse> reportRoutes(ReportController handler) {

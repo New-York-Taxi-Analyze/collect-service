@@ -25,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.Mockito.doReturn;
@@ -45,6 +46,8 @@ class ReportControllerTest {
     WebTestClient webTestClient;
 
     @MockBean
+    WebClient webClient;
+    @MockBean
     DatePeriodParamsMapper totalMapper;
     @MockBean
     TripInfoParamsMapper tripInfoParamsMapper;
@@ -54,8 +57,6 @@ class ReportControllerTest {
     GetTotalUseCase getTotalUseCase;
     @MockBean
     MessageUseCase messageUseCase;
-    @MockBean
-    UserController userController;
 
     @Test
     @DisplayName("Should successfully return HttpStatus.OK for the message response")

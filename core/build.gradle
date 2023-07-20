@@ -65,15 +65,15 @@ dependencies {
     testImplementation group: 'org.flywaydb', name: 'flyway-core', version: '9.19.4'
 }
 
-dockerCompose {
-	useComposeFiles = ['../docker/dockerPostgres.yml', '../docker/dockerKafka.yml']
-	startedServices = ['postgres', 'kafka1', 'kafka2', 'kafka3', 'kafka-schema-registry']
-}
-
-test {
-	dependsOn composeUp
-	finalizedBy composeDown
-}
+//dockerCompose {
+//	useComposeFiles = ['../docker/dockerPostgres.yml', '../docker/dockerKafka.yml']
+//	startedServices = ['postgres', 'kafka1', 'kafka2', 'kafka3', 'kafka-schema-registry']
+//}
+//
+//test {
+//	dependsOn composeUp
+//	finalizedBy composeDown
+//}
 
 tasks.named('test') {
     useJUnitPlatform()

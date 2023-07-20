@@ -28,6 +28,7 @@ dependencies {
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.0.8' // only for tests DefaultKafkaConsumerFactory
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-webflux', version: springBootVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-resource-server', version: springBootVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: springBootVersion
 
     // resilience4j for circuit breaker
@@ -38,6 +39,7 @@ dependencies {
 
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: springBootVersion
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springBootVersion
+    testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-oauth2-client', version: springBootVersion
     testImplementation group: 'org.springframework.kafka', name: 'spring-kafka-test', version: '3.0.8'
     testImplementation group: 'org.springframework.security', name: 'spring-security-test', version: '6.1.0'
     testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.5.7'

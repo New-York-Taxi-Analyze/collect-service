@@ -6,7 +6,6 @@ import com.newyorktaxi.model.StoreAndFwdFlagType;
 import com.newyorktaxi.model.Total;
 import com.newyorktaxi.model.TotalResponse;
 import com.newyorktaxi.model.TripInfoRequest;
-import com.newyorktaxi.model.UserRequest;
 import com.newyorktaxi.usecase.params.DatePeriodParams;
 import com.newyorktaxi.usecase.params.TripInfoParams;
 import lombok.experimental.UtilityClass;
@@ -21,8 +20,6 @@ public class TestData {
     public static final Integer MONTH = 12;
     public static final Integer DAY = 31;
     public static final Double TOTAL = 999.;
-    public static final String USER_EMAIL = "test@test.test";
-    public static final String USER_PASSWORD = "12345";
 
     public TripInfoRequest buildTripInfoRequest() {
         short vendorId = 1;
@@ -88,13 +85,6 @@ public class TestData {
                 .year(YEAR)
                 .month(MONTH)
                 .day(DAY)
-                .build();
-    }
-
-    public UserRequest buildUserRequest(String email, String password) {
-        return UserRequest.builder()
-                .email(email)
-                .password(password)
                 .build();
     }
 }

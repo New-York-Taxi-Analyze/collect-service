@@ -1,6 +1,11 @@
 spring:
   application:
     name: collection-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8099/realms/newyorktaxi/protocol/openid-connect/certs
 
 info:
   app:

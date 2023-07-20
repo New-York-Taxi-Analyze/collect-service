@@ -17,6 +17,7 @@ import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -52,6 +53,7 @@ public class ReportController {
                 }));
     }
 
+    @PreAuthorize("hasRole('USER') || hasRole('ADMIN')")
     public Mono<ServerResponse> total(ServerRequest request) {
         final int year = Integer.parseInt(request.queryParam("year").orElseThrow());
         final int month = Integer.parseInt(request.queryParam("month").orElseThrow());
@@ -59,7 +61,8 @@ public class ReportController {
 
         return Mono.just(datePeriodParamsMapper.toDatePeriodParams(year, month, day))
                 .flatMap(getTotalUseCase::execute)
-                .map(totalResponseMapper::toTotalResponse)                .flatMap(totalResponse -> ServerResponse.ok()
+                .map(totalResponseMapper::toTotalResponse)
+                .flatMap(totalResponse -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(totalResponse))
                 .switchIfEmpty(ServerResponse.notFound().build());

@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  collection-service-db:
+  collect-service-db:
     image: postgres:13
-    container_name: collection-service-db
+    container_name: collect-service-db
     ports:
       - "5555:5432"
     environment:
       POSTGRES_DB: service
       POSTGRES_USER: service
       POSTGRES_PASSWORD: service
-  collection-service-app:
-    image: collection-service/collection-service-api:latest
-    container_name: collection-service-app
+  collect-service-app:
+    image: newyorktaxi/collect-service-app:latest
+    container_name: collect-service-app
     depends_on:
-      - collection-service-db
+      - collect-service-db
     ports:
       - "8080:8080"
